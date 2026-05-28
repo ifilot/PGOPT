@@ -56,3 +56,48 @@ It contains:
 - `logs/*.out`
 
 Proprietary `POTCAR` and full VASP `OUTCAR` files are intentionally not copied into the artifact bundle.
+
+## Master/Worker Parallel Relaxation Check
+
+The second integration test exercises PGOPT's own master/worker scheduler. It
+generates Pt4 candidates, creates one-core `PROC*` workers, lets the master
+assign structures through `REQUEST` files, and verifies that workers report back
+through `RESPONSE` files. This matches the best throughput mode seen in the Pt4
+benchmarks: many independent single-core VASP jobs instead of a few multi-thread
+jobs.
+
+```bash
+PGOPT_TEST_ARTIFACTS=OUT-integration-artifacts \
+  tests/integration/pgopt-vasp-pt4/02-pt4-parallel-relax-nsw20.sh
+```
+
+Defaults:
+
+```text
+CANDIDATE_COUNT=8
+RELAX_COUNT=4
+WORKER_COUNT=4
+THREADS=1
+ENCUT=150
+PREC=Low
+NSW=20
+SCF_ITER=20
+```
+
+For a more realistic cutoff while keeping the same scheduling model:
+
+```bash
+ENCUT=350 PREC=Normal PGOPT_TEST_ARTIFACTS=OUT-integration-artifacts \
+  tests/integration/pgopt-vasp-pt4/02-pt4-parallel-relax-nsw20.sh
+```
+
+Artifacts are written to:
+
+```text
+OUT-integration-artifacts/integration-pt4-parallel-relax-nsw20/
+```
+
+The bundle includes the PGOPT master logs, runtime JSON, worker request/response
+files, worker `relax.in`/`relax.out` files, archived worker bundles, and
+combined final structures. Proprietary `POTCAR` files are not copied into the
+artifact bundle.

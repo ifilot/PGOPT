@@ -450,7 +450,7 @@ class RunVASP(object):
                "LVDW", "LDAU", "LDAUTYPE", "LDAUL", "LDAUU", "LDAUJ", "IVDW",
                "ISIF", "ISYM", "LREAL", "IOPT", "SPRING", "LASPH", "LMAXMIX",
                "LCLIMB", "EFIELD", "LORBIT", "AMIX", "BMIX", "NBANDS", "NPAR",
-               "ICHAIN", "TEBEG", "TEEND", "SMASS", "KBLOCK", "NBLOCK",
+               "NCORE", "ICHAIN", "TEBEG", "TEEND", "SMASS", "KBLOCK", "NBLOCK",
                "IWAVPR", "DIPOL"]
 
     def prepare(self, ip):
