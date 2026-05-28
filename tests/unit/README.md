@@ -28,13 +28,13 @@ The relaxation rungs intentionally use cheap settings (`encut=150`, `prec=Low`, 
 Run the default smoke ladder:
 
 ```bash
-tests/vasp-ladder/run-ladder.sh
+tests/unit/run-ladder.sh
 ```
 
 Include the slower generated-batch rung:
 
 ```bash
-RUN_SLOW=1 tests/vasp-ladder/run-ladder.sh
+RUN_SLOW=1 tests/unit/run-ladder.sh
 ```
 
 The higher-order Pt4 distribution campaign lives in `tests/integration/pgopt-vasp-pt4`.

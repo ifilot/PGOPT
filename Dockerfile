@@ -56,6 +56,14 @@ RUN printf '%s\n' \
 
 WORKDIR /root/PGOPT-PROGRAMS
 COPY . /root/PGOPT-PROGRAMS
+RUN ln -sf main.py ACNN/acnnmain \
+    && ln -sf gmain.py PGOPT/gpuopt \
+    && ln -sf main.py PGOPT/pgopt \
+    && ln -sf zmain.py PGOPT/zr \
+    && ln -sf zmain.py PGOPT/zs \
+    && ln -sf scp2k.py STMOLE/SCP2K \
+    && ln -sf stm.py STMOLE/STMOLE \
+    && ln -sf svasp.py STMOLE/SVASP
 
 RUN make -C /root/PGOPT-PROGRAMS/ACNN/formod
 

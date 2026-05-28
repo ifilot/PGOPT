@@ -1,136 +1,119 @@
-# PGOPT
+# PGOPT Fork
 
 Parallel global optimization of gas phase and surface systems.
 
-Copyright (C) 2018 Huanchen Zhai
+This repository is a maintained fork of the original PGOPT project. It keeps
+the legacy PGOPT/ACNN/STMOLE code usable in a containerized environment and
+adds Docker-based VASP smoke and integration tests. The upstream repository is
+treated as historical reference for this fork; the changes here are not
+currently intended to be submitted upstream as pull requests.
 
-Zhai, Huanchen, and Anastassia N. Alexandrova. "Ensemble-average representation of Pt clusters in conditions of catalysis accessed through GPU accelerated deep neural network fitting global optimization." *Journal of chemical theory and computation* **12** (2016): 6213-6226.
+## Upstream
 
-Zhai, Huanchen, and Anastassia N. Alexandrova. "Local Fluxionality of Surface-Deposited Cluster Catalysts: The Case of Pt7 on Al2O3." *The journal of physical chemistry letters* **9** (2018): 1696-1702.
+The original project is PGOPT by Huanchen Zhai:
 
-## Basic User Guide
-
-### Installation
-
-This code contains three sub-packages. `ACNN` contains all core algorithms. `PGOPT` includes settings for supercomputer environment. `STMOLE` defines the interface to `VASP` and `TURBOMOLE`.
-
-If you want to test the code in a non-supercomputer environment, `PGOPT` and `STMOLE` are not needed.
-
-Here we will explain installation steps using a `docker` (https://docs.docker.com/) image of `anaconda2` (https://hub.docker.com/r/continuumio/anaconda). Please first install the `docker` application in your system, then open a terminal to continue. (You can also use `anaconda` with `python2` installed in your local environment without `docker`.) The following commands will download a image of `anaconda2`:
-
-```
-docker pull continuumio/anaconda
-docker run -it --rm continuumio/anaconda /bin/bash
+```text
+https://github.com/hczhai/PGOPT
 ```
 
-Now you are inside the `docker` container. We need to add the following `python` packages and several packages needed for compiling `fortran` code:
+The original root README has been preserved at
+[`docs/upstream-README.md`](docs/upstream-README.md). Use that file for the
+legacy user guide and citation context. Use this root README for the current
+state of this fork.
 
-```
-pip install theano reportlab dill
-conda install pygpu
-apt-get update
-apt-get -y install gfortran g++ make vim
-```
+## Fork Changes
 
-Now get the copy of `PGOPT`:
+This fork currently adds or changes the following areas:
 
-```
-cd ~
-git clone https://github.com/hczhai/PGOPT.git PGOPT-PROGRAMS
-```
+- A reproducible Docker build around the legacy Python 2 Anaconda environment.
+- Containerized compilation of ACNN Fortran modules.
+- Containerized compilation of VASP 5.4.1 from local source archives.
+- A low-cost PGOPT/SVASP/VASP smoke ladder under `tests/unit`.
+- A higher-order Pt4 PGOPT/VASP integration campaign under
+  `tests/integration/pgopt-vasp-pt4`.
+- Docker Desktop / WSL build compatibility for tracked executable symlinks.
 
-Compile the `fortran` code. This will generate some warnings but the process should not produce any error.
+The fork still depends on proprietary VASP source and potential data. Those
+files must remain local-only inputs and should not be committed.
 
-```
-cd ~/PGOPT-PROGRAMS/ACNN/formod
-make
-```
+## Repository Layout
 
-Now add the following to `~/.bashrc` (you may need `vim ~/.bashrc` first):
-
-```
-BASE=~/PGOPT-PROGRAMS
-export STMOLE_HOME=$BASE/STMOLE
-export ACNNHOME=$BASE/ACNN
-export PGOPTHOME=$BASE/PGOPT
-export PATH=$STMOLE_HOME:$PATH
-export PATH=$PGOPTHOME:$ACNNHOME:$PATH
+```text
+ACNN/                                Core algorithms and ACNN entry point
+PGOPT/                               PGOPT environment and workflow scripts
+STMOLE/                              Interfaces to VASP and TURBOMOLE
+tests/unit/                          Cheap PGOPT/SVASP/VASP smoke ladder
+tests/integration/pgopt-vasp-pt4/    Pt4 integration campaign
+docs/upstream-README.md              Preserved upstream README
+Dockerfile                           Fork-maintained container build
 ```
 
-Then apply the these environment changes:
-```
-source ~/.bashrc
-```
+## Docker Build
 
-### Gas Phase Cluster Generation
+The Docker image expects the local VASP source and potential archives to be
+available in the repository root. For example, this working copy uses:
 
-The main program is called `acnnmain` which can be found under `$ACNNHOME` defined previously. You need to prepare an input file for generating structures. There are some example input files under `ACNN/tests`. Here as an example, we will try to generate some gas phase Pt<sub>7</sub> structures using S-BLDA.
-
-```
-cd $ACNNHOME/tests/structure-generation
-acnnmain pt7-gas.json
+```text
+vasp.5.4.1.tar.gz
+potpaw_PBE.54.tar.gz
 ```
 
-Note that the output directory is indicated in the input file. Here we can find the results in `./OUT-pt7-gas/fil_structs.xyz.0`. The structures are written in `XYZ` format. A single file will contains more than one structures. Visualization software such as `jmol` is useful for examine all structures within only one file. For example, if `jmol` is installed, you can type:
+Build the image:
 
-```
-jmol ./OUT-pt7-gas/fil_structs.xyz.0
-```
-
-to look at the structures.
-
-The `PGOPT` code also has its own visualization implementation. It will generate a PDF file containing images of all structures in the given input file. To generate the PDF, use the following input file (this only works after you run `acnnmain pt7-gas.json`):
-
-```
-acnnmain pt7-gas-draw.json
+```bash
+docker build --build-arg VASP_MAKE_JOBS=4 -t pgopt:local .
 ```
 
-Then you will find the PDF in `./OUT-pt7-gas/report.pdf`.
+The resulting image contains:
 
-### Surface Supported Cluster Generation
+- Python 2 Anaconda packages needed by the legacy PGOPT code.
+- Compiled ACNN Fortran modules.
+- `vasp_gam`, `vasp_std`, and `vasp` under `/opt/vasp/bin`.
+- PBE potentials under `/opt/vasp/potentials`.
 
-The following command will generate Pt<sub>7</sub> structures on alpha-Al<sub>2</sub>O<sub>3</sub> surface. The surface is described by a `XYZ` file. There are some example surface files under `$ACNNHOME/tests/surfaces`. The computational cell information is written in the comment line of the `XYZ` file. It can be either 3 numbers or 5 numbers. The program always assume the `Z` direction is normal to the surface plane. If the cell size is described by 3 numbers `n1 n2 n3`, then the `XYZ` components of cell axes are `a = (n1, 0, 0), b = (0, n2, 0), c = (0, 0, n3)`. If the cell size is described by 5 numbers `n1 n2 n3 n4 n5`, then the `XYZ` components of cell axes are `a = (n1, n2, 0), b = (n3, n4, 0), c = (0, 0, n5)`. Usually `n5` is larger than the actual height of the surface because of the added vacuum gap. So in the end of comment line there is an additional number in parenthesis, indicating the unit cell height along `Z` without vacuum gap.
+## Tests
 
-The surface group and unit cell (the minimal unit cell, not the computational unit cell) information, indicated in the input file may help determining structure duplicates. If these information is unavailable, use the computational cell for unit cell and "P 1" for space group, and `[0.0, 0.0]` for space group transformation reference point.
+Run the default smoke ladder:
 
-```
-acnnmain pt7-alpha.json
-```
-
-Then we can find the results in `./OUT-pt7-alpha/fil_structs.xyz.0`.
-
-### Structure Filtering
-
-The following command will try to find unique structures from a given example `XYZ` file containing some local minima (`$ACNNHOME/tests/data/pt4b4-local.xyz`).
-
-```
-cd $ACNNHOME/tests/filtering
-acnnmain pt4b4-local.json
+```bash
+tests/unit/run-ladder.sh
 ```
 
-The unique structures will be in `./OUT-pt4b4-filter/fil_structs.xyz.0`. The additional file `./OUT-pt4b4-filter/fil_list.txt.0` shows how many duplicates of each unique structure appear in the original input `XYZ` file (the `multi` column). The other additional file `./OUT-pt4b4-filter/fil_corr.txt.0` lists the structural difference data. In this file, if one line ends with `*`, then the structure is selected as unique structure, because its structural difference to all previous unique structures is higher than the threshold. The second last column `mindm` shows the minimal value over structural difference to all previous structures.
+Include the slower generated-batch smoke test:
 
-If the structure filtering should be performed on surface support clusters, the `creation-surface` section should be given in input file, which contains the same information as that in the input file for creation.
-
-### Neural Network Fitting
-
-Note that Neural Network Fitting is only implemented for gas phase clusters containing only one type of element. Other research groups has published more general codes on this topic. For example, see `JCTC, 14(7), 2018, 3933-3942`.
-
-The following command will try to fit a neural network based on an example Pt<sub>9</sub> data (`$ACNNHOME/tests/data/pt9-structs.xyz`). Note that for realistic results, we need to set `sample_number` parameter to `[200000, 20000, 20000]` and `epochs` to `2000`. This calculation normally requires large memory or GPU. If there is no gpu to use, it will automatically switch to cpu.
-
-```
-cd $ACNNHOME/tests/nn_fitting
-export OMP_NUM_THREADS=40
-acnnmain pt9-fit.json
+```bash
+RUN_SLOW=1 tests/unit/run-ladder.sh
 ```
 
-After the fitting is finished, the fitted network will be stored in `./OUT-pt9-nn/fit_network.dill.0`. We have a reference result from executing `acnnmain pt9-fit.json` stored under `$ACNNHOME/tests/nn_fitting_ref`.
+Run the higher-order Pt4 integration campaign:
 
-Next we need to create some new structures, then use the network to optimize them. The file `./OUT-pt9-nn/fit_network.dill.0` is required for optimization.
-
-```
-acnnmain pt9-create.json
-acnnmain pt9-opt.json
+```bash
+PGOPT_TEST_ARTIFACTS=OUT-integration-artifacts \
+  tests/integration/pgopt-vasp-pt4/01-pt4-distribution-campaign.sh
 ```
 
-The optimized structures and energies will be in `./OUT-pt9-nn/opt_structs.xyz.0`.
+The smoke tests intentionally use cheap VASP settings. They prove that PGOPT,
+SVASP, POTCAR discovery, VASP execution, and selected ACNN paths work together;
+they are not chemistry-quality production calculations.
+
+## Notes For Maintainers
+
+This fork is expected to diverge from upstream. Keep fork-specific instructions
+in this root README, preserve upstream reference material under `docs/`, and use
+`CHANGELOG.md` for notable local changes.
+
+When adding tests or build behavior, prefer documenting the exact command that
+was run and whether proprietary VASP inputs are required.
+
+## Citations
+
+If you use PGOPT or ACNN in scientific work, cite the original project papers:
+
+Zhai, Huanchen, and Anastassia N. Alexandrova. "Ensemble-average representation
+of Pt clusters in conditions of catalysis accessed through GPU accelerated deep
+neural network fitting global optimization." *Journal of Chemical Theory and
+Computation* **12** (2016): 6213-6226.
+
+Zhai, Huanchen, and Anastassia N. Alexandrova. "Local Fluxionality of
+Surface-Deposited Cluster Catalysts: The Case of Pt7 on Al2O3." *The Journal of
+Physical Chemistry Letters* **9** (2018): 1696-1702.

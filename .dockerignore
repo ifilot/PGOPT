@@ -4,3 +4,11 @@
 Dockerfile
 OUT-*
 ACNN/tests/**/OUT-*
+ACNN/acnnmain
+PGOPT/gpuopt
+PGOPT/pgopt
+PGOPT/zr
+PGOPT/zs
+STMOLE/SCP2K
+STMOLE/STMOLE
+STMOLE/SVASP

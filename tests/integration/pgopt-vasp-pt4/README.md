@@ -1,6 +1,6 @@
 # PGOPT/VASP Pt4 Integration Campaign
 
-This is the higher-order integration layer. It is separate from the cheap smoke ladder in `tests/unit/vasp-smoke`.
+This is the higher-order integration layer. It is separate from the cheap smoke ladder in `tests/unit`.
 
 The campaign exercises the full Pt4 path:
 
