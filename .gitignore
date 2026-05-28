@@ -102,3 +102,19 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Proprietary VASP source and potential files.
+# These may be present locally for Docker builds, but must not be committed.
+/vasp*.tar.gz
+/potpaw*.tar.gz
+/potentials*.tar.gz
+/vasp.*/
+/vasp*/
+/potpaw*/
+/potpaw_*/
+/potentials*/
+/POTCAR
+**/POTCAR
+
+# Local Docker/smoke-test output.
+OUT-*

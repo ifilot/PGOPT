@@ -1,0 +1,6 @@
+.git
+.agents
+.codex
+Dockerfile
+OUT-*
+ACNN/tests/**/OUT-*
