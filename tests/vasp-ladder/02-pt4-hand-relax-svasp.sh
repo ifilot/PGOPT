@@ -42,4 +42,3 @@ test -s pt4-relax.chk/OSZICAR
 test -s pt4-relax.chk/final.xyz
 echo "hand-written Pt4 relax smoke ok"
 '
-

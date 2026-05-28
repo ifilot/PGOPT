@@ -26,6 +26,5 @@ if [[ "${RUN_SLOW:-0}" == "1" ]]; then
         "${test_script}"
     done
 else
-    echo "Skipping slow tests. Set RUN_SLOW=1 to include them."
+    echo "Skipping slow smoke tests. Set RUN_SLOW=1 to include them."
 fi
-

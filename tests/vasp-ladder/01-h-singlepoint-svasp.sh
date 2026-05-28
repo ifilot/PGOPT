@@ -7,4 +7,3 @@ cd "$(dirname "$0")"
 require_docker_image
 
 docker_run bash -lc '/root/PGOPT-PROGRAMS/smoke-vasp-pgopt.sh'
-

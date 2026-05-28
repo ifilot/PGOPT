@@ -60,4 +60,3 @@ done
 
 echo "generated Pt4 batch smoke ok"
 '
-

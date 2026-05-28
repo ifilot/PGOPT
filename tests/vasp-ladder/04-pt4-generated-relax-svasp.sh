@@ -54,4 +54,3 @@ test -s pt4-generated-relax.chk/CONTCAR
 test -s pt4-generated-relax.chk/final.xyz
 echo "generated Pt4 relax smoke ok"
 '
-

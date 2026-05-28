@@ -37,4 +37,3 @@ test -s OUT-pt4-gas/fil_structs.xyz.0
 test "$(grep -c "^4$" OUT-pt4-gas/fil_structs.xyz.0)" -ge 1
 echo "Pt4 ACNN creation smoke ok"
 '
-

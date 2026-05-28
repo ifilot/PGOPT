@@ -16,4 +16,3 @@ test "$(find /opt/vasp/potentials/potpaw_PBE -maxdepth 2 -name POTCAR | wc -l)" 
 ldd /opt/vasp/bin/vasp_gam | grep "libgfortran.so.5"
 echo "image sanity ok"
 '
-

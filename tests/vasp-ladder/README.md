@@ -1,6 +1,6 @@
-# PGOPT/VASP Test Ladder
+# PGOPT/VASP Smoke Test Ladder
 
-These tests increase coverage gradually, from image sanity checks to small Pt4 gas-phase VASP relaxations.
+These low-level tests check the individual pieces of the Dockerized PGOPT/VASP stack. They are deliberately cheap and narrow: image contents, `SVASP` launch, ACNN creation, and tiny VASP calls.
 
 They assume the Docker image has already been built:
 
@@ -21,11 +21,11 @@ The proprietary VASP source and POTCAR archives must remain local-only inputs to
 | 4 | `04-pt4-generated-relax-svasp.sh` | ~10 seconds | A generated Pt4 candidate can be relaxed through PGOPT/SVASP and VASP. |
 | 5 | `05-pt4-generated-batch-svasp.sh` | ~30 seconds | Several generated Pt4 candidates can each run through the same VASP path. |
 
-The relaxation rungs intentionally use cheap settings (`encut=150`, `prec=Low`, `nsw=1`, `scf(iter=10)`). They are not chemistry-quality calculations. They are integration tests that exercise structure generation, POTCAR lookup, VASP input generation, VASP execution, and output creation.
+The relaxation rungs intentionally use cheap settings (`encut=150`, `prec=Low`, `nsw=1`, `scf(iter=10)`). They are not chemistry-quality calculations and are not the higher-order integration campaign.
 
 ## Running
 
-Run the fast ladder:
+Run the default smoke ladder:
 
 ```bash
 tests/vasp-ladder/run-ladder.sh
@@ -37,17 +37,4 @@ Include the slower generated-batch rung:
 RUN_SLOW=1 tests/vasp-ladder/run-ladder.sh
 ```
 
-Use a different image tag or thread count:
-
-```bash
-PGOPT_IMAGE=pgopt:local THREADS=4 RUN_SLOW=1 tests/vasp-ladder/run-ladder.sh
-```
-
-## Next Rungs
-
-After this ladder is stable, the next useful additions are:
-
-- A small PGOPT worker-orchestration test that runs 3-5 generated Pt4 candidates through the project’s `pgopt` command flow.
-- A medium Pt4 campaign with higher `encut`, more SCF iterations, and `nsw=10-30`.
-- A scaled-down version of the manual’s Pt7 gas-phase workflow once Pt4 orchestration is reliable.
-
+The higher-order Pt4 distribution campaign lives in `tests/integration/pgopt-vasp-pt4`.
