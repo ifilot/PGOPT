@@ -5,6 +5,10 @@ repeatable Pt4 VASP calculations and write timing summaries plus raw VASP
 outputs to an artifact directory. Defaults are intentionally light: `ENCUT=150`,
 `PREC=Low`, one ionic step, and ten electronic iterations.
 
+Hand-authored benchmark inputs live under `fixtures/pt4-single-relax/`: a fixed
+Pt4 starting geometry and an `SVASP` template. The script renders the template
+per benchmark case and keeps the raw VASP outputs in the artifact bundle.
+
 ## Pt4 Single Relaxation
 
 ```bash

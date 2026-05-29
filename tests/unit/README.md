@@ -23,6 +23,13 @@ The proprietary VASP source and POTCAR archives must remain local-only inputs to
 
 The relaxation rungs intentionally use cheap settings (`encut=150`, `prec=Low`, `nsw=1`, `scf(iter=10)`). They are not chemistry-quality calculations and are not the higher-order integration campaign.
 
+## Fixtures
+
+The hand-authored inputs are stored under `fixtures/`. For example,
+`fixtures/pt4-hand-relax/` contains the Pt4 geometry and `SVASP` input used by
+the hand-written relaxation rung. Generated files stay in the container scratch
+directory; only the human-authored chemistry settings live in git.
+
 ## Running
 
 Run the default smoke ladder:

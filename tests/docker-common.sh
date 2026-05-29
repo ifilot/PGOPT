@@ -6,9 +6,21 @@ THREADS="${THREADS:-2}"
 PGOPT_TEST_ARTIFACTS="${PGOPT_TEST_ARTIFACTS:-}"
 PGOPT_DOCKER_HOSTNAME="${PGOPT_DOCKER_HOSTNAME:-}"
 
+# Run a command in the PGOPT image with the standard test environment.
+#
+# Most tests pass a small Bash program through stdin:
+#
+#   docker_run env FOO=bar bash -s <<'CONTAINER_SCRIPT'
+#   ...
+#   CONTAINER_SCRIPT
+#
+# Keeping the container program as a here-doc makes the tests much easier to
+# read than a large `bash -lc '...'` string with nested quoting.
 docker_run() {
     local artifact_args=()
     local hostname_args=()
+    local test_dir
+    test_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
     if [[ -n "${PGOPT_TEST_ARTIFACTS}" ]]; then
         local artifact_dir
@@ -25,10 +37,12 @@ docker_run() {
         hostname_args=(--hostname "${PGOPT_DOCKER_HOSTNAME}")
     fi
 
-    docker run --rm \
+    docker run --rm -i \
         "${hostname_args[@]}" \
         -e OMP_NUM_THREADS="${THREADS}" \
         -e MKL_NUM_THREADS="${THREADS}" \
+        -e PGOPT_TEST_FIXTURES=/pgopt-tests \
+        -v "${test_dir}:/pgopt-tests:ro" \
         "${artifact_args[@]}" \
         "${PGOPT_IMAGE}" "$@"
 }

@@ -1,0 +1,8 @@
+% nproc=1
+% chk=pt4-relax-@IDX@.chk
+# PBE/ coords=coords-@IDX@.xyz cell=18 encut=@ENCUT@ prec=Normal lwave=F lcharg=F sigma=0.1 ismear=0 nsw=@NSW@ ibrion=2 potim=0.2 ediff=1e-4 ediffg=-0.5 scf(iter=@SCF_ITER@)
+
+PGOPT generated Pt4 integration campaign @IDX@
+
+0 0
+

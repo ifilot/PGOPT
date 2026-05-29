@@ -1,0 +1,10 @@
+{
+  "tasks": ["draw"],
+  "output_dir": "./report",
+  "report": {
+    "input_file": "./relaxed/final.xyz",
+    "output_file": "./report/pt4-relaxed.pdf",
+    "number": @RELAX_COUNT@,
+    "ratio": 1.6
+  }
+}

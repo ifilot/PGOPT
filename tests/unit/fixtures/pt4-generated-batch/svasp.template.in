@@ -1,0 +1,8 @@
+% nproc=1
+% chk=pt4-batch-@IDX@.chk
+# PBE/ coords=coords-@IDX@.xyz cell=18 encut=150 prec=Low lwave=F lcharg=F sigma=0.1 ismear=0 nsw=1 ibrion=2 potim=0.2 ediff=1e-4 ediffg=-0.5 scf(iter=10)
+
+PGOPT generated Pt4 batch VASP smoke @IDX@
+
+0 0
+

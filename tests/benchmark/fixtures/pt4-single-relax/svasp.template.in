@@ -1,0 +1,8 @@
+% nproc=@NPROC@
+% chk=@CASE_NAME@.chk
+# PBE/ coords=coords.xyz cell=18 encut=@ENCUT@ prec=@PREC@ lwave=F lcharg=F sigma=0.1 ismear=0 nsw=@NSW@ ibrion=2 potim=0.2 ediff=@EDIFF@ ediffg=@EDIFFG@ scf(iter=@SCF_ITER@) @INCAR_EXTRA@
+
+PGOPT Pt4 benchmark @CASE_NAME@
+
+0 0
+

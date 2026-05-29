@@ -1,0 +1,10 @@
+{
+  "tasks": ["draw"],
+  "output_dir": "./report",
+  "report": {
+    "input_file": "./OUT-pt4-gas/fil_structs.xyz.0",
+    "output_file": "./report/pt4-candidates.pdf",
+    "number": @CANDIDATE_COUNT@,
+    "ratio": 1.6
+  }
+}

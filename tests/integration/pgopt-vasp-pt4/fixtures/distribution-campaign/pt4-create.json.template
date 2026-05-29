@@ -1,0 +1,16 @@
+{
+  "tasks": ["create"],
+  "output_dir": "./OUT-pt4-gas",
+  "random_seed": 0,
+  "creation": {
+    "name": "Pt4",
+    "number": @CANDIDATE_COUNT@,
+    "method": "blda",
+    "order": 2,
+    "2d": 0.3
+  },
+  "filtering-create": {
+    "max_diff": 0.25,
+    "max_diff_report": 1.00
+  }
+}

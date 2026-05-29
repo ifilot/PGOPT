@@ -23,6 +23,14 @@ SCF_ITER=20
 
 This is still not a production optimization campaign; it is a compact integration assessment that proves PGOPT, ACNN, POTCAR discovery, VASP execution, and report production work together.
 
+## Fixtures
+
+Template inputs for the distribution campaign are stored in
+`fixtures/distribution-campaign/`. The shell script renders only the runtime
+knobs (`CANDIDATE_COUNT`, `RELAX_COUNT`, `ENCUT`, `NSW`, `SCF_ITER`, and the
+candidate index), so the chemistry and report settings are visible without
+reading a long Bash heredoc.
+
 ## Running
 
 ```bash
